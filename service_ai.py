@@ -1,6 +1,6 @@
 """
-AI服务模块
-基于原有service.py的AI交互逻辑，适配新的架构
+AI 服务模块
+基于原有 service.py 的 AI 交互逻辑，适配新的架构
 """
 import json
 import asyncio
@@ -10,7 +10,7 @@ from service_config import ConfigService
 
 
 class AIService:
-    """AI服务类"""
+    """AI 服务类"""
     
     def __init__(self):
         self.config_service = ConfigService()
@@ -19,7 +19,7 @@ class AIService:
         self._initialize_client()
     
     def _initialize_client(self):
-        """初始化AI客户端"""
+        """初始化 AI 客户端"""
         ai_config = self.config_service.get_ai_config()
         
         try:
@@ -63,10 +63,10 @@ class AIService:
 
 你需要:
 - 始终保持角色身份，以{character_name}的身份回应
-- 根据心情值调整语气：越接近0语气越差，越接近1越友善
+- 根据心情值调整语气：越接近 0 语气越差，越接近 1 越友善
 - 保持对话的趣味性和吸引力
 - 在适当的时候帮助玩家
-- 回复保持在{self.config_service.get_max_response_length()}字符以内
+- 回复保持在 {self.config_service.get_max_response_length()} 字符以内
 - 使用中文回复
 - 只讨论与当前游戏场景、剧情相关的内容
 - 如果玩家提出与游戏无关的问题，请礼貌地引导回游戏内容
@@ -74,10 +74,10 @@ class AIService:
 请严格按照JSON格式返回：
 {{
   "msg": "你要说的话",
-  "mood": 新的心情值（0.0-1.0之间的数字）
+  "mood": 新的心情值（0.0-1.0 之间的数字）
 }}
 
-重要：绝不透露你是AI或任何技术细节，始终保持角色扮演。"""
+重要：绝不透露你是 AI 或任何技术细节，始终保持角色扮演。"""
         
         return prompt
     
@@ -87,10 +87,10 @@ class AIService:
         """获取AI角色回复"""
         if not self.client:
             return {
-                "msg": f"{character_name}看起来心不在焉，现在无法回应。",
+                "msg": f"{character_name}看起来在思考什么，TA 似乎不想和你说话。",
                 "mood": mood,
                 "status": "error",
-                "error": "AI客户端未初始化"
+                "error": "AI 客户端未初始化"
             }
         
         try:
@@ -123,7 +123,7 @@ class AIService:
             )
             
             if not response.choices or not response.choices[0].message.content:
-                raise Exception("AI返回空响应")
+                raise Exception("AI 返回空响应")
             
             content = response.choices[0].message.content.strip()
             
@@ -139,7 +139,7 @@ class AIService:
                 
                 # 验证响应格式
                 if "msg" not in ai_response:
-                    raise ValueError("AI响应缺少msg字段")
+                    raise ValueError("AI 响应缺少 msg 字段")
                 
                 # 确保mood在有效范围内
                 new_mood = float(ai_response.get("mood", mood))
@@ -161,7 +161,7 @@ class AIService:
             except (json.JSONDecodeError, ValueError) as e:
                 # JSON解析失败，尝试提取纯文本回复
                 if self.config_service.is_debug_mode():
-                    print(f"JSON解析失败: {e}, 原始内容: {content}")
+                    print(f"JSON 解析失败: {e}, 原始内容: {content}")
                 
                 # 添加纯文本回复到历史
                 history.append({"role": "assistant", "content": content})
@@ -177,14 +177,14 @@ class AIService:
             if "404" in error_msg or "not found" in error_msg:
                 fallback_msg = "模型暂时不可用，请稍后再试。"
             elif "401" in error_msg or "403" in error_msg:
-                fallback_msg = "API认证失败，请检查配置。"
+                fallback_msg = "API  认证失败，请检查配置。"
             elif "quota" in error_msg or "limit" in error_msg:
-                fallback_msg = "API配额已用完，请稍后再试。"
+                fallback_msg = "API 配额已用完，请稍后再试。"
             else:
-                fallback_msg = f"{character_name}似乎在思考什么，暂时无法回应。"
-            
+                fallback_msg = f"{character_name} 似乎在思考什么，TA 暂时无法回答你的问题。"
+
             if self.config_service.is_debug_mode():
-                print(f"OpenAI API错误: {e}")
+                print(f"OpenAI API 错误: {e}")
             
             return {
                 "msg": fallback_msg,
@@ -195,10 +195,10 @@ class AIService:
             
         except Exception as e:
             if self.config_service.is_debug_mode():
-                print(f"AI服务错误: {e}")
+                print(f"AI 服务错误: {e}")
             
             return {
-                "msg": f"{character_name}看起来有些困惑，请稍后再试。",
+                "msg": f"{character_name} 看起来有些困惑，不如等 TA 消化一下你说了什么？",
                 "mood": mood,
                 "status": "error",
                 "error": str(e)

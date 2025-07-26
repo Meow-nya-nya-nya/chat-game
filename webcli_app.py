@@ -25,7 +25,7 @@ class WebCLIApp:
         self.session_data = {}  # 简单的会话存储
         
     def _get_session_id(self):
-        """获取会话ID（简化版本，实际项目中应使用更安全的会话管理）"""
+        """获取会话 ID（简化版本，实际项目中应使用更安全的会话管理）"""
         return cherrypy.session.get('session_id', 'default')
     
     def _get_game_state(self):
@@ -52,7 +52,7 @@ class WebCLIApp:
                 'content': response
             })
         
-        # 构建历史记录HTML
+        # 构建历史记录 HTML
         history_html = ""
         for entry in game_state.get('history', []):
             if entry['type'] == 'command':
@@ -60,7 +60,7 @@ class WebCLIApp:
             else:
                 history_html += f'<div class="response-line">{entry["content"]}</div>'
         
-        # 返回完整的HTML页面
+        # 返回完整的 HTML 页面
         return f"""
         <!DOCTYPE html>
         <html lang="zh-CN">
@@ -204,7 +204,7 @@ class WebCLIApp:
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def api_command(self, command=''):
-        """API接口，用于处理命令（可选的JSON API）"""
+        """API 接口，用于处理命令（可选的 JSON API）"""
         game_state = self._get_game_state()
         
         if not command.strip():
@@ -234,7 +234,7 @@ class WebCLIApp:
 
 
 def main():
-    """启动WebCLI应用"""
+    """启动 WebCLI 应用"""
     config_service = ConfigService()
     
     # CherryPy配置

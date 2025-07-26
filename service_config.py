@@ -31,12 +31,12 @@ class ConfigService:
             'model': 'kimi-k2-0711-preview',
             'api_base_url': 'https://api.moonshot.cn/v1',
             'default_mood': 0.5,
-            'session_timeout': 3600,  # 1小时
+            'session_timeout': 3600,  # 1 小时
             'server_host': '0.0.0.0',
             'server_port': 8080,
         }
         
-        # 从config.py加载配置
+        # 从 config.py 加载配置
         if config:
             for attr_name in dir(config):
                 if not attr_name.startswith('_'):
@@ -87,7 +87,7 @@ class ConfigService:
         return self.get('game_title')
     
     def get_ai_config(self) -> Dict[str, Any]:
-        """获取AI配置"""
+        """获取 AI 配置"""
         return {
             'provider': self.get('ai_provider'),
             'api_key': self.get('api_key'),

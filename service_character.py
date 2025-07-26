@@ -1,6 +1,6 @@
 """
 角色管理服务模块
-管理游戏中的NPC角色
+管理游戏中的 NPC 角色
 """
 from typing import Dict, Any, List, Optional
 from service_config import ConfigService
@@ -35,7 +35,7 @@ class Character:
             return ""
         
         context_lines = []
-        for conv in self.conversation_history[-3:]:  # 只取最近3轮对话
+        for conv in self.conversation_history[-3:]:  # 只取最近 3 轮对话
             context_lines.append(f"玩家: {conv['user']}")
             context_lines.append(f"{self.name}: {conv['ai']}")
         
@@ -61,7 +61,7 @@ class Character:
     
     def update_mood(self, new_mood: float):
         """更新心情值"""
-        self.mood = max(0.0, min(1.0, new_mood))  # 确保在0-1范围内
+        self.mood = max(0.0, min(1.0, new_mood))  # 确保在 0-1 范围内
 
 
 class CharacterService:
@@ -153,7 +153,7 @@ class CharacterService:
             self.characters[character_id].update_mood(new_mood)
     
     def get_character_list_for_location(self, location: str) -> List[str]:
-        """获取指定位置的角色ID列表"""
+        """获取指定位置的角色 ID 列表"""
         return [
             char_id for char_id, char in self.characters.items()
             if char.location == location
