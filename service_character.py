@@ -5,18 +5,58 @@
 from typing import Dict, Any, List, Optional
 from service_config import ConfigService
 
+class Mob:
+    def __init__(self, name: str, health: int, attack_base: int, physical: int, magical: int, attack_speed: int, defense: int):
+        # physical magical 一般在 100 上下，乘以 attack_base 得到攻击力
+        self.name = "Mob"
+        self.health = health
+        self.attack_base = attack_base
+        self.physical = physical
+        self.magical = magical
+        self.attack_speed = attack_speed
+        self.defense = defense
+    
+    def take_damage(self, mob: 'Mob'):
+        texts = []
+        # 先按照 attack_speed 决定先后手
+        is_attacker = self.attack_speed >= mob.attack_speed
+        current, enemy = (self, mob) if is_attacker else (mob, self)
+        while current.health > 0 and enemy.health > 0:
+            attack_type = current.decide_attack_type()
+            match self.attack_type:
+                case 'physical':
+                    damage = max(0, current.physical * enemy.attack_base - enemy.defense)
+                    texts.append(f"{enemy} 对 {current} 造成了 {damage} 点物理伤害")
+                case 'magical':
+                    damage = max(0, current.magical * enemy.attack_base - enemy.defense)
+                    texts.append(f"{enemy} 对 {current} 造成了 {damage} 点魔法伤害")
+            mob.health -= damage
+            if current.health <= 0:
+                texts.append(f"{current} 被击败了！")
+                break
+            current, enemy = enemy, current  # 交换攻击者和防御者
+        return texts
+    
+    def decide_attack_type(self) -> str:
+        """决定攻击类型"""
+        # 简单示例：50% 概率物理攻击，50% 概率魔法攻击
+        return 'physical' if self.attack_base % 2 == 0 else 'magical'
+    
+    def __repr__(self):
+        return self.name
 
 class Character:
     """角色类"""
     
     def __init__(self, character_id: str, name: str, personality: str, 
-                 location: str, mood: float = None):
+                 location: str, mood: float = None, mob: Optional[Mob] = None):
         self.character_id = character_id
         self.name = name
         self.personality = personality
         self.location = location
         self.mood = mood or ConfigService().get_default_mood()
         self.conversation_history = []
+        self.mob = mob if mob else Mob(name, 100, 10, 100, 100, 1, 5)  # 默认 Mob 设置
     
     def add_conversation(self, user_message: str, ai_response: str):
         """添加对话记录"""
@@ -165,4 +205,3 @@ class CharacterService:
         for character in self.characters.values():
             character.mood = default_mood
             character.conversation_history = []
-
